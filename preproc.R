@@ -24,7 +24,8 @@ colnames(cd) <- gsub("^one_","",colnames(cd)) # strip out the prefix - don't nee
 # read gene IDs separately, since you want them
 gene.map <- read.csv(paste(args[1],"genes.tsv",sep='/'),header=F,sep='\t',stringsAsFactors = F)
 colnames(gene.map) <- c("id","name")
-rownames(gene.map) <- rownames(cd) <- gene.map[,1]
+rownames(gene.map) <- gene.map[,1]
+rownames(cd) <- gene.map[,2] # will use human readable names; if you want to use IDS, switch to [,1]
 
 
 # Filter cells
@@ -94,6 +95,9 @@ cat("done\n")
 
 #Output
 cat("writing out files ...")
+# p2 object
+saveRDS(r,file='pagoda2.rds',compress=FALSE)
+
 # Raw and scaled matrices
 # Matrices
 
