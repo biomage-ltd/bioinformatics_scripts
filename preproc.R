@@ -9,10 +9,9 @@ require(data.table)
 
 args <- commandArgs(trailingOnly = TRUE)
 
-args <- c("/home/rstudio/programming/gi_mok")
+args <- c("/home/rstudio/data")
 
-setwd("/home/rstudio/programming/gi_mok/outputs")
-
+setwd("/home/rstudio/data")
 
 
 cat("processing 10x text format matrices from", args[1],'\n')
@@ -96,7 +95,7 @@ cat("done\n")
 #Output
 cat("writing out files ...")
 # p2 object
-saveRDS(r,file='pagoda2.rds',compress=FALSE)
+saveRDS(r,file='pagoda2_output.rds',compress=FALSE)
 
 # Raw and scaled matrices
 # Matrices
