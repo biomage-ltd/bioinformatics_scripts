@@ -1,0 +1,68 @@
+---
+title: "Querying p2 pboject"
+output: html_notebook
+---
+
+# Loading
+First, an example of how to load the persisted object
+
+```{r}
+library(pagoda2)
+r <- readRDS("pagoda2.rds")
+```
+
+# Reading expression
+An example of how to get expression of a given gene:
+```{r}
+# get the expression values for a given gene
+x <- r$counts[,'GZMB']
+# look at the result
+str(x)
+```
+
+We can wrap it into a function that returns an encoded JSON object:
+```{r}
+get.gene.expression.vector <- function(gene) {
+  require(rjson)
+  if(!gene %in% colnames(r$counts)) stop("no such gene")
+  x <- r$counts[,gene]
+  toJSON(x)
+}
+```
+
+
+try it:
+```{r}
+x <- get.gene.expression.vector('GZMB') # get the encoded string
+# look at the string
+str(x)
+```
+
+# Reading embedding
+```{r}
+# read in embedding, report as a JSON string
+x <- r$embeddings$PCA[['tSNE']]
+str(toJSON(x))
+```
+
+# Differential expression
+
+Define a function to compare two different clusters
+```{r}
+compare.two.clusters <- function(cluster1, cluster2) {
+  clusters <- r$clusters$PCA[['community']] # default clusterin factor
+  # set values of all cells that are not in cluster 1 or cluster 2 to NA, so that we contrast only the two specified clusters
+  clusters[! as.character(clusters) %in% c(cluster1,cluster2)] <- NA
+  clusters <- droplevels(clusters) # drop unused cluster levels
+  # run DE
+  x <- r$getDifferentialGenes(groups=clusters)
+  x[[1]]
+}
+```
+
+Example use:
+```{r}
+x <- compare.two.clusters('4','8')
+head(x) # view beginning of the table  ... use toJSON(x) to return JSON structure
+```
+
